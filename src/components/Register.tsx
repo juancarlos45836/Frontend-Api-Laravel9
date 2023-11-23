@@ -1,4 +1,52 @@
+import { ReactElement, useState } from "react";
+import axios from "axios";
+
+interface DataInterface {
+  name: string;
+  email: string;
+  password: number;
+  passwordConfirmation: number;
+}
 export default function Register() {
+  const [data, setData] = useState<DataInterface>({
+    name: "",
+    email: "",
+    password: 0,
+    passwordConfirmation: 0,
+  });
+
+  const handleName = (value: string) => {
+    setData({ ...data, name: value });
+  };
+
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setData({ ...data, email: e.target.value });
+  };
+  const handlePassword = (value: number) => {
+    setData({ ...data, password: value });
+  };
+  const handlePasswordConfirmation = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setData({ ...data, passwordConfirmation: e.target.valueAsNumber });
+  };
+
+  const sendData = (e: Event) => {
+    e.preventDefault();
+
+    fetch("http://localhost:8000/api/register", {
+      method: "post",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "cache-control": "no-cache",
+      },
+    })
+      .then((res) => res.json())
+      .catch((error) => console.error("Error: en la respuesta", error))
+      .then((response) => console.log("Success:", response));
+  };
   return (
     <div className="font-sans">
       <div className="relative w-[500px] min-h-screen flex flex-col sm:justify-center items-center bg-gray-100 ">
@@ -12,14 +60,11 @@ export default function Register() {
             >
               Registrate
             </label>
-            <form
-              method="POST"
-              action="http://localhost:8000/api/register"
-              className="mt-10"
-            >
+            <form onSubmit={sendData} className="mt-10">
               <div>
                 <input
                   type="text"
+                  onChange={(e) => handleName(e.target.value)}
                   required
                   name="name"
                   placeholder="Nombres"
@@ -30,6 +75,7 @@ export default function Register() {
               <div className="mt-7">
                 <input
                   type="email"
+                  onChange={handleEmail}
                   required
                   name="email"
                   placeholder="Correo electronico"
@@ -39,7 +85,8 @@ export default function Register() {
 
               <div className="mt-7">
                 <input
-                  type="text"
+                  type="password"
+                  onChange={(e) => handlePassword(e.target.valueAsNumber)}
                   required
                   name="password"
                   placeholder="Contraseña"
@@ -49,7 +96,8 @@ export default function Register() {
 
               <div className="mt-7">
                 <input
-                  type="text"
+                  type="password"
+                  onChange={handlePasswordConfirmation}
                   required
                   name="password_confirmation"
                   placeholder="Confirmar contraseña"

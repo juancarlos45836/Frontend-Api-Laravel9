@@ -1,11 +1,10 @@
 import "./App.css";
-import Register from "./components/Register";
-import Sesion from "./components/Sesion";
+import { TableUsers } from "./components/tableUsers";
 
 function App() {
   return (
     <>
-      <Register></Register>
+      <TableUsers />
     </>
   );
 }
